@@ -1,0 +1,3 @@
+This project is an application based in Qt designed to handle the details of commencement operations at schools and universities. The end goal of the project is to integrate Qt and SQL to read in a database of students, select relevant information that should be displayed on overhead screens, and submit that information either to a shared folder or to some sort of web server. The program will also have a graphical version that will do the actual displaying of the students.
+
+Students will provide some sort of scanning document, probably a barcode, and the barcode will be used to pull the student from the database.
