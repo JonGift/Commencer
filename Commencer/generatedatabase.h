@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QDebug>
+#include <QFileDialog>
 
 namespace Ui {
 class GenerateDatabase;
@@ -19,6 +20,8 @@ public:
 private slots:
     void accept();
     void on_buttonBox_rejected();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::GenerateDatabase *ui;
