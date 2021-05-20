@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QDebug>
 #include <QFileDialog>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
 
 namespace Ui {
 class GenerateDatabase;
@@ -25,6 +27,8 @@ private slots:
 
 private:
     Ui::GenerateDatabase *ui;
+    QSqlDatabase database; // Holds graduates generated from the excel/xml doc, is ordered correctly
+    QString inputPath; // Holds path to original grad xml/excel
 };
 
 #endif // GENERATEDATABASE_H
