@@ -27,8 +27,9 @@ void GenerateDatabase::on_buttonBox_rejected()
 void GenerateDatabase::on_pushButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), "/home/jana", tr("Image Files (*.png *.jpg *.bmp)"));
+        tr("Open Database"), "/home", tr("Excel file extension (*.xlsx *.xlsm *.xlsb *.xls)"));
 
     qInfo() << fileName;
+    ui->lineEdit->setText(fileName);
 }
 
