@@ -66,9 +66,21 @@ void GenerateDatabase::on_pushButton_clicked()
         qInfo() << "Unable to open .csv file";
         return;
     }
+    QString line = file.readLine();
+    QStringList keys = line.split(",");
+    for(int i = 0; i < keys.length(); i++)
+        if(keys[i].isEmpty())
+            ui->comboBox->addItem("Empty column " + QVariant(i).toString());
+        else
+            ui->comboBox->addItem(keys[i]);
 
-    while (!file.atEnd()) {
-        qInfo() << file.readLine();
-    }
+
+    //QStringList wordList;
+    //while (!file.atEnd()) {
+      //  qInfo() << file.readLine();
+        //wordList.append(line.split(',').first());
+    //}
+
+    //qDebug() << wordList;
 }
 
