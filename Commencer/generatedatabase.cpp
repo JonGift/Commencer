@@ -18,6 +18,66 @@ void GenerateDatabase::accept(){
     // Requires: The .csv file must already have been parsed.
     qInfo() << "Wow";
 
+    database = QSqlDatabase::addDatabase("QSQLITE", inputPath + ".db");
+    database.setDatabaseName(inputPath + ".db");
+
+    if(!database.open()){
+        qInfo() << "Database was not opened.";
+        return;
+    }
+
+    QSqlQuery q(database);
+    q.prepare("DROP TABLE grads;");
+    q.exec();
+    QString fields = "";
+    QString fieldsDataless = "";
+
+    for(int i = 0; i < keys.length(); i++){
+        if(i != 0){
+            fields += ", ";
+            fieldsDataless += ", ";
+        }
+
+        fields += "[" + keys[i] + "] string";
+        fieldsDataless += "[" + keys[i] + "]";
+        if(keys[i] == dbPrimaryKey)
+            fields += " PRIMARY KEY";
+    }
+    QString query = "CREATE TABLE grads(" + fields + ");";
+    qInfo() << "Executing command: " << query;
+    q.prepare(query);
+    q.exec();
+
+    QFile file(inputPath);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << file.errorString();
+        qInfo() << "Failed to open file.";
+        return;
+    }
+
+    file.readLine();
+
+    while (!file.atEnd()) {
+        QString inputTemp = file.readLine().simplified();
+        QStringList inputSplit = inputTemp.split(',');
+        for(int i = 0; i < inputSplit.length(); i++)
+            if(inputSplit[i].isEmpty())
+                inputSplit[i] = "NULL";
+            else
+                inputSplit[i] = "\'" + inputSplit[i] + "\'";
+        inputTemp = inputSplit.join(", ");
+        query = "INSERT INTO grads VALUES (" + inputTemp + ");";
+        qInfo() << "Executing command: " << query;
+        q.prepare(query);
+        q.exec();
+    }
+
+
+
+    file.close();
+    database.close();
+
 
     //QSqlQuery q();
     // TODO: Figure out a way to convert excel documents to .csv format in the program itself.
@@ -60,7 +120,7 @@ void GenerateDatabase::on_pushButton_clicked()
     ui->lineEdit->setText(fileName);
     inputPath = fileName;
 
-    QFile file(fileName);
+    QFile file(inputPath);
 
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << file.errorString();
@@ -70,15 +130,19 @@ void GenerateDatabase::on_pushButton_clicked()
         return;
     }
     QString line = file.readLine();
-    QStringList keys = line.split(",");
-    for(int i = 0; i < keys.length(); i++)
-        if(keys[i].isEmpty())
+    keys = line.split(","); // TODO: Blows up on majors with a comma in their name.
+    for(int i = 0; i < keys.length(); i++){
+        keys[i] = keys[i].simplified();
+        if(keys[i].isEmpty()){
             ui->comboBox->addItem("Empty column " + QVariant(i).toString());
-        else
+            keys[i] = "Empty column " + QVariant(i).toString();
+        }else
             ui->comboBox->addItem(keys[i]);
+    }
 
     ui->labelPrimaryKey->setEnabled(true);
     ui->comboBox->setEnabled(true);
+    file.close();
     //QStringList wordList;
     //while (!file.atEnd()) {
       //  qInfo() << file.readLine();

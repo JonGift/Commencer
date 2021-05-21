@@ -32,6 +32,7 @@ private:
     QSqlDatabase database; // Holds graduates generated from the excel/xml doc, is ordered correctly
     QString inputPath; // Holds path to original grad xml/excel
 
+    QStringList keys; // Holds the original column keys from the .csv file
     QString dbPrimaryKey; // Holds the input from the combo box, is used to generate the .db file with primary key
 };
 
