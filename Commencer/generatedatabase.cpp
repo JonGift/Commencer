@@ -13,7 +13,7 @@ GenerateDatabase::~GenerateDatabase()
     delete ui;
 }
 
-// TODO
+// Thanks to jefftee at qtforums
 QStringList GenerateDatabase::stringSplitter(QString line){
     QString temp = line;
     QString field;
@@ -130,7 +130,7 @@ void GenerateDatabase::accept(){
                 inputSplit[i] = "\'" + inputSplit[i] + "\'";
         inputTemp = inputSplit.join(", ");
         query = "INSERT INTO grads VALUES (" + inputTemp + ");";
-        qInfo() << "Executing command: " << query;
+        //qInfo() << "Executing command: " << query;
         q.prepare(query);
         q.exec();
     }
