@@ -14,9 +14,60 @@ GenerateDatabase::~GenerateDatabase()
 }
 
 // TODO
-QStringList GenerateDatabase::stringSplitter(QString inputStr){
-    QStringList finalList;
-    return finalList;
+QStringList GenerateDatabase::stringSplitter(QString line){
+    QString temp = line;
+    QString field;
+    QStringList field_list;
+
+    // regex explaination
+    //
+    //    /(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)/g
+    //        (?:^|,) Non-capturing group
+    //            1st Alternative: ^
+    //                ^ assert position at start of the string
+    //            2nd Alternative: ,
+    //                , matches the character , literally
+    //        1st Capturing group (\"(?:[^\"]+|\"\")*\"|[^,]*)
+    //            1st Alternative: \"(?:[^\"]+|\"\")*\"
+    //                \" matches the character " literally
+    //                (?:[^\"]+|\"\")* Non-capturing group
+    //                    Quantifier: * Between zero and unlimited times, as many times as possible, giving back as needed [greedy]
+    //                    1st Alternative: [^\"]+
+    //                        [^\"]+ match a single character not present in the list below
+    //                            Quantifier: + Between one and unlimited times, as many times as possible, giving back as needed [greedy]
+    //                            \" matches the character " literally
+    //                    2nd Alternative: \"\"
+    //                        \" matches the character " literally
+    //                        \" matches the character " literally
+    //                \" matches the character " literally
+    //            2nd Alternative: [^,]*
+    //                [^,]* match a single character not present in the list below
+    //                    Quantifier: * Between zero and unlimited times, as many times as possible, giving back as needed [greedy]
+    //                    , the literal character ,
+    //        g modifier: global. All matches (don't return on first match)
+    //
+
+    QString regex = "(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)";
+
+    QRegularExpression re(regex);
+
+    if (temp.right(1) == "\n") temp.chop(1);
+
+    QRegularExpressionMatchIterator it = re.globalMatch(temp);
+
+    while (it.hasNext())
+    {
+        QRegularExpressionMatch match = it.next();
+        if (match.hasMatch())
+        {
+            field = match.captured(1);
+            if (field.left(1) == "\"" && field.right(1) == "\"")
+                field = field.mid(1, field.length()-2);
+            field_list.push_back(field);
+        }
+    }
+
+    return field_list;
 }
 
 void GenerateDatabase::toggleWidgets(bool tf){
@@ -71,7 +122,7 @@ void GenerateDatabase::accept(){
 
     while (!file.atEnd()) {
         QString inputTemp = file.readLine().simplified();
-        QStringList inputSplit = inputTemp.split(',');
+        QStringList inputSplit = GenerateDatabase::stringSplitter(inputTemp);
         for(int i = 0; i < inputSplit.length(); i++)
             if(inputSplit[i].isEmpty())
                 inputSplit[i] = "NULL";
@@ -140,7 +191,8 @@ void GenerateDatabase::on_pushButton_clicked()
         return;
     }
     QString line = file.readLine();
-    keys = line.split(","); // TODO: Blows up on majors with a comma in their name.
+    //keys = line.split(","); // TODO: Blows up on majors with a comma in their name.
+    keys = GenerateDatabase::stringSplitter(line);
     for(int i = 0; i < keys.length(); i++){
         keys[i] = keys[i].simplified();
         if(keys[i].isEmpty()){
