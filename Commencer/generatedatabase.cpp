@@ -73,6 +73,8 @@ QStringList GenerateDatabase::stringSplitter(QString line){
 void GenerateDatabase::toggleWidgets(bool tf){
     ui->labelPrimaryKey->setEnabled(tf); // TODO: Put this in a function
     ui->comboBox->setEnabled(tf);
+    ui->listWidget->setEnabled(tf);
+    ui->labelColumns->setEnabled(tf);
 }
 
 void GenerateDatabase::accept(){
@@ -94,8 +96,13 @@ void GenerateDatabase::accept(){
     QString fields = "";
     QString fieldsDataless = "";
 
+    int counter = 0;
     for(int i = 0; i < keys.length(); i++){
-        if(i != 0){
+        if(ui->listWidget->item(i)->checkState() == Qt::Unchecked){
+            counter++;
+            continue;
+        }
+        if(i != counter){
             fields += ", ";
             fieldsDataless += ", ";
         }
@@ -123,14 +130,25 @@ void GenerateDatabase::accept(){
     while (!file.atEnd()) {
         QString inputTemp = file.readLine().simplified();
         QStringList inputSplit = GenerateDatabase::stringSplitter(inputTemp);
-        for(int i = 0; i < inputSplit.length(); i++)
+        inputTemp = "";
+        counter = 0;
+        for(int i = 0; i < inputSplit.length(); i++){
+            if(ui->listWidget->item(i)->checkState() == Qt::Unchecked){
+                counter++;
+                continue;
+            }
+            if(i != counter){
+                inputTemp += ", ";
+            }
+
             if(inputSplit[i].isEmpty())
-                inputSplit[i] = "NULL";
+                inputTemp += "NULL";
             else
-                inputSplit[i] = "\'" + inputSplit[i] + "\'";
-        inputTemp = inputSplit.join(", ");
+                inputTemp += "\'" + inputSplit[i] + "\'";
+        }
+        //inputTemp = inputSplit.join(", ");
         query = "INSERT INTO grads VALUES (" + inputTemp + ");";
-        //qInfo() << "Executing command: " << query;
+        qInfo() << "Executing command: " << query;
         q.prepare(query);
         q.exec();
     }
@@ -191,7 +209,6 @@ void GenerateDatabase::on_pushButton_clicked()
         return;
     }
     QString line = file.readLine();
-    //keys = line.split(","); // TODO: Blows up on majors with a comma in their name.
     keys = GenerateDatabase::stringSplitter(line);
     for(int i = 0; i < keys.length(); i++){
         keys[i] = keys[i].simplified();
@@ -200,6 +217,14 @@ void GenerateDatabase::on_pushButton_clicked()
             keys[i] = "Empty column " + QVariant(i).toString();
         }else
             ui->comboBox->addItem(keys[i]);
+    }
+
+    QStringListIterator it(keys);
+    while (it.hasNext())
+    {
+          QListWidgetItem *listItem = new QListWidgetItem(it.next(),ui->listWidget);
+          listItem->setCheckState(Qt::Unchecked);
+          ui->listWidget->addItem(listItem);
     }
 
     toggleWidgets(true);
