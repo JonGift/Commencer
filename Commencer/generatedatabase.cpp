@@ -84,3 +84,9 @@ void GenerateDatabase::on_pushButton_clicked()
     //qDebug() << wordList;
 }
 
+void GenerateDatabase::on_comboBox_currentIndexChanged(int index)
+{
+    dbPrimaryKey = ui->comboBox->itemText(index);
+    qInfo() << dbPrimaryKey;
+}
+

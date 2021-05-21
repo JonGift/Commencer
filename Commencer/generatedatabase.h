@@ -25,10 +25,14 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_comboBox_currentIndexChanged(int index);
+
 private:
     Ui::GenerateDatabase *ui;
     QSqlDatabase database; // Holds graduates generated from the excel/xml doc, is ordered correctly
     QString inputPath; // Holds path to original grad xml/excel
+
+    QString dbPrimaryKey; // Holds the input from the combo box, is used to generate the .db file with primary key
 };
 
 #endif // GENERATEDATABASE_H
