@@ -50,6 +50,7 @@ void GenerateDatabase::on_buttonBox_rejected()
 }
 
 
+// Select a csv file, this function also populates information that comes from that file.
 void GenerateDatabase::on_pushButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -64,6 +65,8 @@ void GenerateDatabase::on_pushButton_clicked()
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << file.errorString();
         qInfo() << "Unable to open .csv file";
+        ui->labelPrimaryKey->setEnabled(false); // TODO: Put this in a function
+        ui->comboBox->setEnabled(false);
         return;
     }
     QString line = file.readLine();
@@ -74,7 +77,8 @@ void GenerateDatabase::on_pushButton_clicked()
         else
             ui->comboBox->addItem(keys[i]);
 
-
+    ui->labelPrimaryKey->setEnabled(true);
+    ui->comboBox->setEnabled(true);
     //QStringList wordList;
     //while (!file.atEnd()) {
       //  qInfo() << file.readLine();
@@ -84,6 +88,7 @@ void GenerateDatabase::on_pushButton_clicked()
     //qDebug() << wordList;
 }
 
+// When the combo box changes, the primary key is updated to reflect that.
 void GenerateDatabase::on_comboBox_currentIndexChanged(int index)
 {
     dbPrimaryKey = ui->comboBox->itemText(index);

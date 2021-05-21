@@ -62,14 +62,21 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="labelPrimaryKey">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Select primary key:</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QComboBox" name="comboBox"/>
+     <widget class="QComboBox" name="comboBox">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
