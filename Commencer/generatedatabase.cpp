@@ -13,6 +13,17 @@ GenerateDatabase::~GenerateDatabase()
     delete ui;
 }
 
+// TODO
+QStringList GenerateDatabase::stringSplitter(QString inputStr){
+    QStringList finalList;
+    return finalList;
+}
+
+void GenerateDatabase::toggleWidgets(bool tf){
+    ui->labelPrimaryKey->setEnabled(tf); // TODO: Put this in a function
+    ui->comboBox->setEnabled(tf);
+}
+
 void GenerateDatabase::accept(){
     // This function should generate the .db file based on our input parameters and such.
     // Requires: The .csv file must already have been parsed.
@@ -125,8 +136,7 @@ void GenerateDatabase::on_pushButton_clicked()
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << file.errorString();
         qInfo() << "Unable to open .csv file";
-        ui->labelPrimaryKey->setEnabled(false); // TODO: Put this in a function
-        ui->comboBox->setEnabled(false);
+        toggleWidgets(false);
         return;
     }
     QString line = file.readLine();
@@ -140,8 +150,7 @@ void GenerateDatabase::on_pushButton_clicked()
             ui->comboBox->addItem(keys[i]);
     }
 
-    ui->labelPrimaryKey->setEnabled(true);
-    ui->comboBox->setEnabled(true);
+    toggleWidgets(true);
     file.close();
     //QStringList wordList;
     //while (!file.atEnd()) {

@@ -34,6 +34,9 @@ private:
 
     QStringList keys; // Holds the original column keys from the .csv file
     QString dbPrimaryKey; // Holds the input from the combo box, is used to generate the .db file with primary key
+
+    QStringList stringSplitter(QString); // TODO: Needs regex for splitting on commas and ignoring quotations
+    void toggleWidgets(bool); // This enables or disables widgets related to whether or not a file has been selected and opened.
 };
 
 #endif // GENERATEDATABASE_H
